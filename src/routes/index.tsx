@@ -1,24 +1,61 @@
+import { useCallback, useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "motion/react";
+import { EnvelopeScene } from "@/components/invite/EnvelopeScene";
+import { InvitationLetter } from "@/components/invite/InvitationLetter";
+import { MusicToggle } from "@/components/invite/MusicToggle";
+import { invitation } from "@/data/invitation";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+const title = "Ahmed & Ayesha — Wedding Invitation, 14 December 2026";
+const description =
+  "You are invited to the Nikah and Walima of Ahmed & Ayesha in Hyderabad, December 2026. Open the envelope to view the invitation, events and RSVP.";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const [opened, setOpened] = useState(false);
+  const [interacted, setInteracted] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = opened ? "" : "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [opened]);
+
+  const handleOpened = useCallback(() => setOpened(true), []);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="relative min-h-screen bg-background">
+      <AnimatePresence>
+        {!opened && (
+          <div onPointerDown={() => setInteracted(true)}>
+            <EnvelopeScene data={invitation} onOpened={handleOpened} />
+          </div>
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: opened ? 1 : 0 }}
+        transition={{ duration: 1 }}
+      >
+        <InvitationLetter data={invitation} />
+      </motion.div>
+
+      {invitation.music.enabled && <MusicToggle start={interacted} />}
     </div>
   );
 }
