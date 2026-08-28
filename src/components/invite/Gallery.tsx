@@ -6,6 +6,7 @@ import type { GalleryPhoto } from "@/data/invitation";
 export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
   const [active, setActive] = useState<GalleryPhoto | null>(null);
   const tilt = [-3.2, 2.4, -1.6];
+  const tiltAt = (i: number) => tilt[i % tilt.length] ?? 0;
 
   return (
     <>
@@ -15,8 +16,8 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
             key={photo.src}
             type="button"
             onClick={() => setActive(photo)}
-            initial={{ opacity: 0, y: 40, rotate: tilt[i % 3] * 2 }}
-            whileInView={{ opacity: 1, y: 0, rotate: tilt[i % 3] }}
+            initial={{ opacity: 0, y: 40, rotate: tiltAt(i) * 2 }}
+            whileInView={{ opacity: 1, y: 0, rotate: tiltAt(i) }}
             viewport={{ once: true, amount: 0.35 }}
             transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
             className="group relative block w-[82%] bg-ivory p-3 pb-10 shadow-[var(--shadow-paper)]"
