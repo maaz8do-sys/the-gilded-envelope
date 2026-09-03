@@ -1,138 +1,62 @@
-import couple1 from "@/assets/couple-1.jpg";
-import couple2 from "@/assets/couple-2.jpg";
-import couple3 from "@/assets/couple-3.jpg";
-
-export type InvocationKind = "allah" | "om" | "jesus" | "ram" | "custom" | "none";
-
-export interface Invocation {
-  kind: InvocationKind;
-  text: string;
-  translation?: string;
-  dir: "ltr" | "rtl";
-  lang: string;
-  fontClass?: string;
-}
-
-export interface WeddingEvent {
-  id: string;
-  name: string;
-  date: string; // display date
-  time: string;
-  venue: string;
-  address: string;
-  city: string;
-  description?: string;
-  mapsUrl?: string;
-}
+/**
+ * View-model types for the invitation design.
+ *
+ * Data never comes from local files at runtime — it is mapped from the central
+ * public RPC `get_public_invitation_content` (see src/lib/public-invitation.ts).
+ * Every field is optional-safe: empty values hide their UI.
+ */
 
 export interface GalleryPhoto {
   src: string;
   alt: string;
-  caption?: string;
+  caption?: string | undefined;
 }
 
-export interface SocialLink {
-  kind: "whatsapp" | "phone" | "instagram" | "facebook" | "youtube";
-  label: string;
-  url: string;
+export interface ContactEntry {
+  name?: string | undefined;
+  phone: string;
+  whatsappUrl?: string | undefined;
+}
+
+export interface EventItem {
+  id: string;
+  name?: string | undefined;
+  date?: string | undefined;
+  time?: string | undefined;
+  venue?: string | undefined;
+  city?: string | undefined;
+  description?: string | undefined;
+  mapsUrl?: string | undefined;
 }
 
 export interface InvitationConfig {
   monogram: string;
-  couple: {
-    groom: string;
-    bride: string;
-    conjunction: string;
-  };
-  dateDisplay: string;
-  dateISO: string;
-  invocation: Invocation;
-  message: string[];
-  events: WeddingEvent[];
+  groomName: string;
+  brideName: string;
+  invocationText?: string | undefined;
+  invocationRtl: boolean;
+  dateDisplay?: string | undefined;
+  timeDisplay?: string | undefined;
+  /** epoch ms; countdown renders only when this is a valid future time */
+  countdownTarget?: number | undefined;
+  events: EventItem[];
   venue: {
-    name: string;
-    address: string;
-    city: string;
-    mapsUrl: string;
+    name?: string | undefined;
+    address?: string | undefined;
+    city?: string | undefined;
+    mapsUrl?: string | undefined;
+    imageUrl?: string | undefined;
   };
   gallery: GalleryPhoto[];
-  contact: {
-    heading: string;
-    note: string;
-  };
-  socials: SocialLink[];
-  closing: {
-    kicker: string;
-    line: string;
-  };
-  music: { enabled: boolean };
+  music: { enabled: boolean; url?: string | undefined };
+  contacts: ContactEntry[];
 }
 
-export const invitation: InvitationConfig = {
-  monogram: "A & A",
-  couple: { groom: "Ahmed", bride: "Ayesha", conjunction: "&" },
-  dateDisplay: "14 December 2026",
-  dateISO: "2026-12-14T11:00:00+05:30",
-  invocation: {
-    kind: "allah",
-    text: "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
-    translation: "In the name of God, the Most Gracious, the Most Merciful",
-    dir: "rtl",
-    lang: "ar",
-    fontClass: "font-arabic",
-  },
-  message: [
-    "Together with their families",
-    "Ahmed & Ayesha",
-    "invite you to celebrate their special day",
-  ],
-  events: [
-    {
-      id: "nikah",
-      name: "Nikah",
-      date: "14 December 2026",
-      time: "11:00 AM",
-      venue: "Falaknuma Banquet Hall",
-      address: "Engine Bowli, Falaknuma",
-      city: "Hyderabad",
-      description: "The solemnisation, followed by lunch.",
-      mapsUrl: "https://maps.google.com/?q=Falaknuma+Hyderabad",
-    },
-    {
-      id: "walima",
-      name: "Walima",
-      date: "16 December 2026",
-      time: "7:30 PM",
-      venue: "Taj Krishna Lawns",
-      address: "Road No. 1, Banjara Hills",
-      city: "Hyderabad",
-      description: "Dinner reception hosted by the groom's family.",
-      mapsUrl: "https://maps.google.com/?q=Taj+Krishna+Banjara+Hills+Hyderabad",
-    },
-  ],
-  venue: {
-    name: "Taj Krishna Lawns",
-    address: "Road No. 1, Banjara Hills, Telangana 500034",
-    city: "Hyderabad",
-    mapsUrl: "https://maps.google.com/?q=Taj+Krishna+Banjara+Hills+Hyderabad",
-  },
-  gallery: [
-    { src: couple1, alt: "Ahmed and Ayesha together", caption: "The beginning" },
-    { src: couple2, alt: "Hands of the couple with henna and gold", caption: "A promise" },
-    { src: couple3, alt: "Ivory roses and gold candlesticks", caption: "The celebration" },
-  ],
-  contact: {
-    heading: "Kindly Respond",
-    note: "Your presence is the greatest gift. Please let us know by 1 December 2026.",
-  },
-  socials: [
-    { kind: "whatsapp", label: "WhatsApp", url: "https://wa.me/919000000000" },
-    { kind: "phone", label: "Call", url: "tel:+919000000000" },
-    { kind: "instagram", label: "Instagram", url: "https://instagram.com" },
-  ],
-  closing: {
-    kicker: "With Love",
-    line: "Thank you for celebrating with us",
-  },
-  music: { enabled: true },
-};
+export interface ShopFallback {
+  name?: string | undefined;
+  phone?: string | undefined;
+  whatsapp?: string | undefined;
+  address?: string | undefined;
+  city?: string | undefined;
+  business_contact?: string | undefined;
+}

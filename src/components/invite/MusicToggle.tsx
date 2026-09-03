@@ -2,20 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 
 /**
- * Discreet ambient score generated with the Web Audio API (no third-party audio),
- * only started after an explicit user interaction.
+ * Discreet music control, only started after an explicit user interaction.
+ * Plays the provided music URL when given; otherwise a soft Web Audio ambient
+ * score. An unplayable URL disables the control silently.
  */
-export function MusicToggle({ start }: { start: boolean }) {
+export function MusicToggle({ start, url }: { start: boolean; url?: string | undefined }) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const ctxRef = useRef<AudioContext | null>(null);
   const gainRef = useRef<GainNode | null>(null);
   const [playing, setPlaying] = useState(false);
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (!start) return;
     setReady(true);
     void begin();
     return () => {
+      audioRef.current?.pause();
+      audioRef.current = null;
       void ctxRef.current?.close();
       ctxRef.current = null;
     };
@@ -23,13 +28,32 @@ export function MusicToggle({ start }: { start: boolean }) {
   }, [start]);
 
   async function begin() {
+    if (url) {
+      if (!audioRef.current) {
+        const audio = new Audio(url);
+        audio.loop = true;
+        audio.volume = 0.5;
+        audio.addEventListener("error", () => setFailed(true));
+        audioRef.current = audio;
+      }
+      try {
+        await audioRef.current.play();
+        setPlaying(true);
+      } catch {
+        setFailed(true);
+      }
+      return;
+    }
+
     if (ctxRef.current) {
       await ctxRef.current.resume();
       gainRef.current?.gain.setTargetAtTime(0.05, ctxRef.current.currentTime, 1.2);
       setPlaying(true);
       return;
     }
-    const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const Ctor =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!Ctor) return;
     const ctx = new Ctor();
     const master = ctx.createGain();
@@ -60,6 +84,19 @@ export function MusicToggle({ start }: { start: boolean }) {
   }
 
   function toggle() {
+    const audio = audioRef.current;
+    if (audio) {
+      if (playing) {
+        audio.pause();
+        setPlaying(false);
+      } else {
+        audio
+          .play()
+          .then(() => setPlaying(true))
+          .catch(() => setFailed(true));
+      }
+      return;
+    }
     const ctx = ctxRef.current;
     if (!ctx || !gainRef.current) {
       void begin();
@@ -75,7 +112,7 @@ export function MusicToggle({ start }: { start: boolean }) {
     }
   }
 
-  if (!ready) return null;
+  if (!ready || failed) return null;
 
   return (
     <button
