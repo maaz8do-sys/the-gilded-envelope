@@ -84,13 +84,17 @@ export function EnvelopeScene({
                 The Wedding of
               </span>
               <h2 className="font-display text-3xl leading-tight text-ink">
-                {data.couple.groom}
-                <span className="mx-2 text-gold">{data.couple.conjunction}</span>
-                {data.couple.bride}
+                {data.groomName}
+                {data.groomName && data.brideName && (
+                  <span className="mx-2 text-gold">&</span>
+                )}
+                {data.brideName}
               </h2>
-              <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-gold-deep">
-                {data.dateDisplay}
-              </span>
+              {data.dateDisplay && (
+                <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-gold-deep">
+                  {data.dateDisplay}
+                </span>
+              )}
             </div>
           </motion.div>
 
