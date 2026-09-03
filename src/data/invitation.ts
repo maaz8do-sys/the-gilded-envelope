@@ -9,54 +9,54 @@
 export interface GalleryPhoto {
   src: string;
   alt: string;
-  caption?: string;
+  caption?: string | undefined;
 }
 
 export interface ContactEntry {
-  name?: string;
+  name?: string | undefined;
   phone: string;
-  whatsappUrl?: string;
+  whatsappUrl?: string | undefined;
 }
 
 export interface EventItem {
   id: string;
-  name?: string;
-  date?: string;
-  time?: string;
-  venue?: string;
-  city?: string;
-  description?: string;
-  mapsUrl?: string;
+  name?: string | undefined;
+  date?: string | undefined;
+  time?: string | undefined;
+  venue?: string | undefined;
+  city?: string | undefined;
+  description?: string | undefined;
+  mapsUrl?: string | undefined;
 }
 
 export interface InvitationConfig {
   monogram: string;
   groomName: string;
   brideName: string;
-  invocationText?: string;
+  invocationText?: string | undefined;
   invocationRtl: boolean;
-  dateDisplay?: string;
-  timeDisplay?: string;
+  dateDisplay?: string | undefined;
+  timeDisplay?: string | undefined;
   /** epoch ms; countdown renders only when this is a valid future time */
-  countdownTarget?: number;
+  countdownTarget?: number | undefined;
   events: EventItem[];
   venue: {
-    name?: string;
-    address?: string;
-    city?: string;
-    mapsUrl?: string;
-    imageUrl?: string;
+    name?: string | undefined;
+    address?: string | undefined;
+    city?: string | undefined;
+    mapsUrl?: string | undefined;
+    imageUrl?: string | undefined;
   };
   gallery: GalleryPhoto[];
-  music: { enabled: boolean; url?: string };
+  music: { enabled: boolean; url?: string | undefined };
   contacts: ContactEntry[];
 }
 
 export interface ShopFallback {
-  name?: string;
-  phone?: string;
-  whatsapp?: string;
-  address?: string;
-  city?: string;
-  business_contact?: string;
+  name?: string | undefined;
+  phone?: string | undefined;
+  whatsapp?: string | undefined;
+  address?: string | undefined;
+  city?: string | undefined;
+  business_contact?: string | undefined;
 }
