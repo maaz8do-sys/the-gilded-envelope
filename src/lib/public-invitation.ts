@@ -184,7 +184,7 @@ function mapEvent(raw: unknown, index: number): EventItem | null {
   const ev: EventItem = {
     id: str(raw["id"]) ?? `event-${index}`,
     name: str(raw["name"]) ?? str(raw["title"]) ?? str(raw["event_name"]),
-    date: str(raw.date) ?? str(raw["event_date"]),
+    date: str(raw["date"]) ?? str(raw["event_date"]),
     time: str(raw["time"]) ?? str(raw["start_time"]),
     venue: str(raw["venue"]) ?? str(raw["venue_name"]),
     city: str(raw["city"]),
